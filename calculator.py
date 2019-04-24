@@ -45,7 +45,6 @@ def add(a, b):
     """ Returns a STRING with the sum of the arguments """
     return str(int(a) + int(b))
 
-# TODO: Add functions for handling more arithmetic operations.
 def subtract(a, b):
     """ Returns a STRING with the difference of the arguments """
     return str(int(a) - int(b))
@@ -56,6 +55,8 @@ def multiply(a, b):
 
 def divide(a, b):
     """ Returns a STRING with the divisor of the arguments """
+    if b == "0":
+        raise ZeroDivisionError
     return str(int(a) / int(b))
 
 def index():
@@ -80,10 +81,6 @@ def resolve_path(path):
     arguments.
     """
 
-    # TODO: Provide correct values for func and args. The
-    # examples provide the correct *syntax*, but you should
-    # determine the actual values of func and args using the
-    # path.
     functions = {
         '': index,
         'add': add,
@@ -115,6 +112,9 @@ def application(environ, start_response):
     except ValueError:
         status = "400 Bad Request"
         body = "<h1>Bad Request: make sure you use integer parameters</h1>"
+    except ZeroDivisionError:
+        status = "400 Bad Request"
+        body = "<h1>Whoops! No dividing by zero allowed on this page</h1>"
     except Exception:
         status = "500 Internal Server Error"
         body = "<h1>Internal Server Error</h1>"
@@ -123,14 +123,6 @@ def application(environ, start_response):
         headers.append(('Content-length', str(len(body))))
         start_response(status, headers)
         return [body.encode('utf8')]
-        # TODO: Your application code from the book database
-        # work here as well! Remember that your application must
-        # invoke start_response(status, headers) and also return
-        # the body of the response in BYTE encoding.
-        #
-        # TODO (bonus): Add error handling for a user attempting
-        # to divide by zero.
-
 
 if __name__ == '__main__':
     from wsgiref.simple_server import make_server
